@@ -9,17 +9,17 @@ class NtbProvProvider extends AbstractProvider implements ProviderInterface
 
     protected function getAuthUrl($state)
     {
-        return $this->buildAuthUrlFromBase('http://sso.test/oauth/authorize', $state);
+        return $this->buildAuthUrlFromBase('https://sso.ntbprov.go.id/oauth/authorize', $state);
     }
 
     protected function getTokenUrl()
     {
-        return 'http://sso.test/oauth/token';
+        return 'https://sso.ntbprov.go.id/oauth/token';
     }
 
     protected function getUserByToken($token)
     {
-        $response = $this->getHttpClient()->get('http://sso.test/api/user', [
+        $response = $this->getHttpClient()->get('https://sso.ntbprov.go.id/api/user', [
             RequestOptions::HEADERS => [
                 'Accept' => 'application/json',
                 'Authorization' => 'Bearer '.$token,
