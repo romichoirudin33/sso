@@ -1,0 +1,20 @@
+{
+    "name": "romichoirudin33/sso",
+    "description": "this packages for OAuth2 for NTB Goverment",
+    "require": {
+        "php": "^8.0",
+        "guzzlehttp/guzzle": "^6.0|^7.0"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Romichoirudin33\\Sso\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "romichoirudin33",
+            "email": "romichoirudin33@gmail.com"
+        }
+    ]
+}
