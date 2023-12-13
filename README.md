@@ -72,7 +72,7 @@ use Illuminate\Support\Facades\Auth;
 use Romichoirudin33\Sso\Facades\Sso;
 
 Route::get('/auth/callback', function () {
-    $ssoUser = Sso::driver('github')->user();
+    $ssoUser = Sso::driver('ntbprov')->user();
 
     $user = User::updateOrCreate([
         'email' => $ssoUser->email,
@@ -102,6 +102,19 @@ Route::get('/auth/callback', function () {
     $expiresIn = $user->expiresIn;
 
 });
+```
+
+### User Details (JSON)
+```
+{
+    "id": 13819,
+    "name": "ROMI CHOIRUDIN",
+    "email": "romi@ntbprov.go.id",
+    "email_verified_at": "2023-12-11T08:13:35.000000Z",
+    "nip": "199412032023211011",
+    "created_at": "2023-12-11T08:33:16.000000Z",
+    "updated_at": "2023-12-11T08:33:16.000000Z"
+}
 ```
 
 #
