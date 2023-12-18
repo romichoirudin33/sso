@@ -189,5 +189,119 @@ Your account not yet registered from administrator, Please contact administrator
 
 But it's just example for using this package. You still need to adapt the code to your needs.
 
+## Custom Authentication Using CodeIgniter 3
+
+### HTTPClient Libraries
+Please make libraries HTTPClient on **application/libraries/HTTPClient.php**  
+```
+<?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+
+class HTTPClient {
+  protected $CI;
+
+  public function __construct() {
+    $this->CI =& get_instance();
+  }
+
+  public function get($url, $params = array(), $headers = array()) {
+    $url = $url . '?' . http_build_query($params);
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+    $response = curl_exec($ch);
+    curl_close($ch);
+    return $response;
+  }
+
+  public function post($url, $data = array()) {
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+    $response = curl_exec($ch);
+    curl_close($ch);
+    return $response;
+  }
+
+  public function generateRandomString($length = 10) {
+    $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    $randomString = '';
+    for ($i = 0; $i < $length; $i++) {
+      $randomString .= $characters[rand(0, strlen($characters) - 1)];
+    }
+    return $randomString;
+  }
+}
+```
+
+### Controller
+Don't forget to autoload libraries and helpers before make controller
+```
+$autoload['libraries'] = array('session');
+$autoload['helper'] = array('url');
+```
+
+So you can use this code for get data user, but if you have specific logic authentication 
+you still need to adapt the code to your needs.
+
+```
+<?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+
+class Auth extends CI_Controller {
+
+  public function __construct() {
+    parent::__construct();
+    $this->load->library('HTTPClient');
+  }
+
+  var $clientId = '9adfebe4-1ded-425c-ad2d-892d5a6c4ccc';
+  var $clientSecret = 'TcdmxRTOwdF7cs26PLbRHs9tUSbrmGCNLYcYrVtQ';
+  var $redirectUrl = 'http://localhost/codeigniter/index.php/welcome/callback2';
+
+  public function redirect() {
+    $state = $this->httpclient->generateRandomString(40);
+    $this->session->set_userdata('state', $state);
+ 
+    $query = http_build_query([
+      'client_id' => $this->clientId,
+      'redirect_uri' => $this->redirectUrl,
+      'response_type' => 'code',
+      'scope' => '',
+      'state' => $state,
+    ]);
+ 
+    return redirect('https://sso.ntbprov.go.id/oauth/authorize?'.$query);
+  }
+
+  public function callback(){
+    $code = $this->input->get('code');
+    $data = [
+      'grant_type' => 'authorization_code',
+      'client_id' => $this->clientId,
+      'client_secret' => $this->clientSecret,
+      'code' => $code,
+      'redirect_uri' => $this->redirectUrl,
+    ];
+
+    $url = 'https://sso.ntbprov.go.id/oauth/token';
+    $response = $this->httpclient->post($url, $data);
+    $response = json_decode($response);
+
+    $token = $response->access_token;
+    $header = array('Authorization: Bearer '.$token, 'Content-Type: application/json', 'Accept: application/json');
+    $user = $this->httpclient->get('https://sso.ntbprov.go.id/api/user', [], $header);
+
+    /*
+    * This from get data user
+    * If you want to logic authentication you still need to adapt the code to your needs
+    */
+  }
+}
+
+```
+
+
 ## Supports Me
 For next information about this package you can contact me on romi@ntbprov.go.id
