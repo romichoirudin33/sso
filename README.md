@@ -256,9 +256,9 @@ class Auth extends CI_Controller {
     $this->load->library('HTTPClient');
   }
 
-  var $clientId = '9adfebe4-1ded-425c-ad2d-892d5a6c4ccc';
-  var $clientSecret = 'TcdmxRTOwdF7cs26PLbRHs9tUSbrmGCNLYcYrVtQ';
-  var $redirectUrl = 'http://localhost/codeigniter/index.php/welcome/callback2';
+  var $clientId = 'xxxxxxx-xxxx-xxxx-xxxxx-xxxxxxxx';
+  var $clientSecret = 'xxxxxxxxxxxxxxxx';
+  var $redirectUrl = 'https://example.ntbprov.go.id/index.php/auth/callback';
 
   public function redirect() {
     $state = $this->httpclient->generateRandomString(40);
