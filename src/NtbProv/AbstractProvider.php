@@ -9,7 +9,9 @@ use Illuminate\Support\Str;
 use Romichoirudin33\Sso\Contracts\Provider as ProviderContract;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-abstract class AbstractProvider implements ProviderContract{
+
+abstract class AbstractProvider implements ProviderContract
+{
 
     /**
      * The HTTP request instance.
@@ -126,7 +128,7 @@ abstract class AbstractProvider implements ProviderContract{
 
     protected function buildAuthUrlFromBase($url, $state)
     {
-        return $url.'?'.http_build_query($this->getCodeFields($state));
+        return $url . '?' . http_build_query($this->getCodeFields($state));
     }
 
     protected function getCodeFields($state = null)
@@ -155,6 +157,24 @@ abstract class AbstractProvider implements ProviderContract{
         return ! $this->stateless;
     }
 
+    protected function isStateless()
+    {
+        return $this->stateless;
+    }
+
+    public function stateless()
+    {
+        $this->stateless = true;
+        return $this;
+    }
+
+    public function with(array $parameters)
+    {
+        $this->parameters = $parameters;
+
+        return $this;
+    }
+
     protected function getState()
     {
         return Str::random(40);
@@ -167,6 +187,10 @@ abstract class AbstractProvider implements ProviderContract{
 
     protected function hasInvalidState()
     {
+        if ($this->isStateless()) {
+            return false;
+        }
+
         $state = $this->request->session()->pull('state');
 
         return empty($state) || $this->request->input('state') !== $state;
